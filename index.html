@@ -1,0 +1,252 @@
+
+<!--  @2018 Ana Jofre  created for Encounters in History and Theory of Education -->
+
+<!doctype html>
+<html lang="en" xml:lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Encounters</title>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<!-- <script type="text/javascript" src="template.js"></script> -->
+
+<style>
+	.change:hover{
+		cursor: pointer;
+		background: #EDEDED;
+	}
+
+	.change {
+		font-size: 30px;
+		font-weight: 900;
+		text-align: center;
+	}
+
+	.display {
+		width: 60%;
+		margin-left: 20%;
+
+	}
+
+	#info{
+		visibility: hidden;
+	}
+
+	td {
+		text-align: center;
+		vertical-align: center;
+	}
+
+
+</style>
+
+
+</head>
+
+
+
+<body onload ="main()">
+
+
+<div class = "display" style = "overflow-x: scroll; overflow-y: hidden; height: 150px;"><table id= "thumbnails"></table></div>
+
+
+<table class = "display" id = "Slideshow">
+              <tr><td width="5%" class="change" id="prev">
+            
+              <
+              
+              </td>
+
+              <td width="90%" id = "slidephoto"></td>
+              
+              <td width="5%" class = "change" id="next">
+          
+              >
+             
+              </td></tr>
+              
+              
+
+             <tr><td colspan="3">
+              <div id="slidecaption">
+              </div>
+               </td>
+              
+			</tr>
+              
+</table>
+
+
+<div id="info"></div>
+
+<script type="text/javascript" >
+	
+var index;
+
+function main(){
+
+
+//load thumbnails
+thumbnails();
+
+
+//start slideshow
+
+var length = 1;
+index = 0;
+slideshow(index, length, 0);
+
+//activate slideshow buttons
+document.getElementById("prev").onclick = function(){
+				cleardiv();
+				length = parseInt(document.getElementById("info").innerHTML);
+				index = slideshow(index, length, -1);	
+			};
+
+document.getElementById("next").onclick = function(){
+				cleardiv();
+				length = parseInt(document.getElementById("info").innerHTML);
+				index = slideshow(index, length, 1);
+			};
+
+
+
+
+}
+
+////////////////////////////////////////////////
+function cleardiv(){
+
+	var disp = [document.getElementById("slidephoto"), document.getElementById("slidecaption")];
+	var x;
+
+for (x in disp){
+
+	var c = disp[x].childNodes;
+	var i=0;
+	while (disp[x].hasChildNodes()) {
+		disp[x].removeChild(c[0]);
+		i++;
+	}
+}
+}
+
+
+/////////////////////////////////////////////////////////////
+
+function slideshow(index, length, direction){
+	var div = document.getElementById("Slideshow");
+
+	if (direction>0){
+		index +=1;
+		if (index>=length){
+			index=0;
+		}
+	}
+	else if (direction<0){
+		index -=1;
+		if (index<0){
+			index=length-1;
+		}
+	} 
+
+
+	d3.tsv("photos/index.tsv", function(d){
+
+	return {
+	 	Image:d.Image,
+	 	Caption:d.Caption,
+		};
+
+
+	},
+
+	function(data){
+				var display1 = document.getElementById("slidephoto");
+				
+				var img = document.createElement('img');
+					img.src="photos/"+ data[index].Image;
+					img.style.height = "50vh";
+					img.style.width = "auto";
+					img.style.display = "block";
+					img.style.align = "center";
+					img.style.margin="auto";
+
+
+					display1.appendChild(img);
+
+
+				var display2 = document.getElementById("slidecaption");
+
+				var txt = document.createTextNode(data[index].Caption);
+					display2.appendChild(txt);
+
+	
+});
+
+return index;
+
+}
+
+
+
+
+////////////////////////////////////////////////////////////
+
+function thumbnails(){
+	d3.tsv("photos/index.tsv", function(d){
+
+	return {
+	 	Image:d.Image,
+	 	Caption:d.Caption,
+		};
+
+
+	},
+
+	function(data){
+				//record data length
+				document.getElementById("info").innerHTML = data.length;
+
+				//get table
+				var table = document.getElementById("thumbnails");
+				//insert row
+				var row = table.insertRow(0);
+
+				//load images into table
+				for (var i=0; i<data.length; i++){
+					var cell = row.insertCell(i);
+					var img = document.createElement('img');
+						img.src="photos/"+ data[i].Image;
+						img.id=i.toString();
+						img.style.width = "100px";
+						img.style.display = "block";
+						img.style.align = "center";
+						img.style.margin="auto";
+
+						img.onclick = ShowImage;
+
+
+						cell.appendChild(img);
+
+				}
+				
+	
+});
+}
+
+////////////////////////////////////////////////////////
+
+function ShowImage(){
+	index = parseInt(this.id);
+	cleardiv();
+	slideshow(index, length, 0);
+}
+
+
+	
+</script>
+
+
+</body>
+</html>
