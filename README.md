@@ -1,6 +1,6 @@
 # ImageGalleryTemplate
 
-Image gallery sample can be found here: http://onewomancaravan.net/encounters_template/
+Image gallery sample can be found here: https://gannettgallery.org/JiaZhou/
 
 To use this: 
 1) create a folder, name it 'photos', and add your images to this folder. 
